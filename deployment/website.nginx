@@ -1,0 +1,18 @@
+# symlinked from /etc/nginx/sites-available
+server {
+	listen 80;
+	root /var/www/website;
+	index index.html;
+
+	access_log /var/log/nginx/website.access.log;
+	error_log /var/log/nginx/website.error.log;
+
+	location / {
+		try_files $uri $uri/ =404;
+	}
+
+	location /api {
+        include proxy_params;
+        proxy_pass http://localhost:5000;
+    }
+}
