@@ -20,6 +20,10 @@ def create_app(config_class=config.ProdConfig):
     jwt.init_app(app)
     db.init_app(app)
 
+    from api.errors import bp as errors_bp
+
+    app.register_blueprint(errors_bp, url_prefix="/api")
+
     from api.auth import bp as auth_bp
 
     app.register_blueprint(auth_bp, url_prefix="/api")
