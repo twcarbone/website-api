@@ -17,12 +17,12 @@ def test_register(_init_db, _client, _new_user_dict):
 
 def test_register_missing_params(_init_db, _client):
     response = _client.post("/api/register", json={"email": "foo"})
-    assert response.status_code == 200
-    assert response.data == b"Missing password\n"
+    assert response.status_code == 422
+    assert response.json.get("message") == "Missing password"
 
     response = _client.post("/api/register", json={"email": "foo", "password": ""})
-    assert response.status_code == 200
-    assert response.data == b"Missing password\n"
+    assert response.status_code == 422
+    assert response.json.get("message") == "Missing password"
 
 
 def test_login(_init_db, _client, _existing_user_dict):
@@ -34,5 +34,5 @@ def test_login(_init_db, _client, _existing_user_dict):
 
 def test_login_invalid_password(_init_db, _client, _existing_user_dict):
     response = _client.post("api/login", json={"email": "bean@gmail.com", "password": "wrong-password"})
-    assert response.status_code == 200
-    assert response.data == b"Wrong email or password\n"
+    assert response.status_code == 401
+    assert response.json.get("message") == "Wrong email or password"

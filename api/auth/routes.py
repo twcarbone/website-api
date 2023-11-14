@@ -8,6 +8,7 @@ import api.utils as utils
 from api import db
 from api import jwt
 from api.auth import bp
+from api.errors.handlers import APIError
 
 
 @jwt.user_identity_loader
@@ -44,6 +45,6 @@ def login():
     user = db.session.execute(db.select(models.User).filter_by(email=email)).scalar()
 
     if user is None or not user.checkpw(password):
-        return "Wrong email or password\n"
+        raise APIError("Wrong email or password", status_code=401)
 
     return flask.jsonify(access_token=flask_jwt_extended.create_access_token(identity=user))
