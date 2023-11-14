@@ -55,6 +55,16 @@ def _existing_user_dict():
 
 
 @pytest.fixture
+def _existing_user_jwt(_client, _existing_user_dict):
+    return _client.post("api/login", json=_existing_user_dict).get_json().get("access_token")
+
+
+@pytest.fixture
+def _existing_user_header_bearer(_existing_user_jwt):
+    return {"Authorization": f"Bearer {_existing_user_jwt}"}
+
+
+@pytest.fixture
 def _new_user_dict():
     return {"email": "cheese@gmail.com", "password": "my-favorite-bone"}
 
