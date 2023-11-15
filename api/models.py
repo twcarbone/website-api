@@ -17,6 +17,7 @@ str_20 = typing_extensions.Annotated[str, 20]
 str_100 = typing_extensions.Annotated[str, 100]
 str_500 = typing_extensions.Annotated[str, 500]
 byt_60 = typing_extensions.Annotated[bytes, 60]
+num_6_3 = typing_extensions.Annotated[decimal.Decimal, 6]
 
 
 def engine(user: str, password: str, host: str, port: int, database: str):
@@ -49,6 +50,7 @@ class Base(orm.DeclarativeBase):
             str_100: sa.String(100),
             str_500: sa.String(500),
             byt_60: sa.LargeBinary(60),
+            num_6_3: sa.Numeric(6, 3),
         }
     )
 
@@ -120,3 +122,37 @@ class User(Base):
 
     def checkpw(self, password: str) -> bool:
         return bcrypt.checkpw(password.encode("utf-8"), self.pwhash)
+
+
+class PipeSize(Base):
+    """
+    Nominal pipe size and OD in accordance with ANSI B36.10.
+    """
+
+    nps: orm.Mapped[str_20] = orm.mapped_column(unique=True)
+    outer_dia: orm.Mapped[num_6_3]
+
+    _pipeschs: orm.Mapped[list["PipeThkns"]] = orm.relationship(back_populates="_pipesize")
+
+
+class PipeSch(Base):
+    """
+    Pipe schedules in accordance with ANSI B36.10.
+    """
+
+    sch: orm.Mapped[str_100]
+
+    _pipesizes: orm.Mapped[list["PipeThkns"]] = orm.relationship(back_populates="_pipesch")
+
+
+class PipeThkns(Base):
+    """
+    Pipe wall thickness for pipe NPS and schedule in accordance with ANSI B36.10.
+    """
+
+    pipesize_id: orm.Mapped[int] = orm.mapped_column(sa.ForeignKey(PipeSize.id), primary_key=True)
+    pipesch_id: orm.Mapped[int] = orm.mapped_column(sa.ForeignKey(PipeSch.id), primary_key=True)
+    thkns: orm.Mapped[num_6_3]
+
+    _pipesize: orm.Mapped["PipeSize"] = orm.relationship(back_populates="_pipeschs")
+    _pipesch: orm.Mapped["PipeSch"] = orm.relationship(back_populates="_pipesizes")
