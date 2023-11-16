@@ -138,6 +138,20 @@ class PipeSize(Base):
 
     _pipeschs: orm.Mapped[list["PipeThkns"]] = orm.relationship(back_populates="_pipesize")
 
+    @staticmethod
+    def inner_dia(nps: str, sch: str) -> decimal.Decimal:
+        """
+        Return calculated inner diameter for the given *nps* and *sch*.
+        """
+        outer_dia, thkns = db.session.execute(
+            db.select(PipeSize.outer_dia, PipeThkns.thkns)
+            .join(PipeSize)
+            .join(PipeSch)
+            .where(PipeSize.nps.like(nps))
+            .where(PipeSch.sch.like(sch))
+        ).one()
+        return outer_dia - 2 * thkns
+
 
 class PipeSch(Base):
     """
