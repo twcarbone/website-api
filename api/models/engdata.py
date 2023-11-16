@@ -19,7 +19,7 @@ class PipeSize(Base):
     nps: orm.Mapped[str_20] = orm.mapped_column(unique=True)
     outer_dia: orm.Mapped[num_6_3]
 
-    _pipeschs: orm.Mapped[list["PipeThkns"]] = orm.relationship(back_populates="_pipesize")
+    _pipethknss: orm.Mapped[list["PipeThkns"]] = orm.relationship(back_populates="_pipesize")
 
     @staticmethod
     def inner_dia(nps: str, sch: str) -> decimal.Decimal:
@@ -43,7 +43,7 @@ class PipeSch(Base):
 
     sch: orm.Mapped[str_100]
 
-    _pipesizes: orm.Mapped[list["PipeThkns"]] = orm.relationship(back_populates="_pipesch")
+    _pipethknss: orm.Mapped[list["PipeThkns"]] = orm.relationship(back_populates="_pipesch")
 
 
 class PipeThkns(Base):
@@ -55,5 +55,5 @@ class PipeThkns(Base):
     pipesch_id: orm.Mapped[int] = orm.mapped_column(sa.ForeignKey(PipeSch.id), primary_key=True)
     thkns: orm.Mapped[num_6_3]
 
-    _pipesize: orm.Mapped["PipeSize"] = orm.relationship(back_populates="_pipeschs")
-    _pipesch: orm.Mapped["PipeSch"] = orm.relationship(back_populates="_pipesizes")
+    _pipesize: orm.Mapped["PipeSize"] = orm.relationship(back_populates="_pipethknss")
+    _pipesch: orm.Mapped["PipeSch"] = orm.relationship(back_populates="_pipethknss")
