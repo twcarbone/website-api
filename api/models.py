@@ -6,6 +6,7 @@ import re
 import typing
 
 import bcrypt
+import flask_sqlalchemy
 import sqlalchemy as sa
 import sqlalchemy.ext.declarative as declarative
 import sqlalchemy.orm as orm
@@ -88,6 +89,9 @@ class Base(orm.DeclarativeBase):
     @orm.declared_attr
     def __tablename__(cls) -> str:
         return re.sub(r"(?<!^)(?=[A-Z])", "_", cls.__name__).lower() + "_"
+
+
+db = flask_sqlalchemy.SQLAlchemy(model_class=Base)
 
 
 class User(Base):

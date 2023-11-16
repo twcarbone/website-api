@@ -10,7 +10,7 @@ import api.models
 import config
 
 jwt = flask_jwt_extended.JWTManager()
-db = flask_sqlalchemy.SQLAlchemy(model_class=api.models.Base)
+db = api.models.db
 
 
 def create_app(config_class=config.ProdConfig):
