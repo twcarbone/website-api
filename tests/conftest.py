@@ -37,8 +37,14 @@ def _runner(_app):
 
 @pytest.fixture
 def _init_db(_client):
-    db.drop_all()
-    db.create_all()
+    """
+    Initialize the test database to support testing.
+
+    Drop and re-create tables, add mock data, etc.
+    """
+    # Only drop/create the necessary tables
+    User.__table__.drop(db.engine)
+    User.__table__.create(db.engine)
 
     db.session.add(User(email="bean@gmail.com", password="catnip"))
     db.session.commit()
