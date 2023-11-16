@@ -7,6 +7,7 @@ from alembic import context
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
+import api.models
 from api import db
 
 from config import Config
@@ -33,8 +34,6 @@ if cmd_kwargs:
 else:
     db_names = re.split(r",\s*", config.get_main_option("databases"))
 
-
-import api.models
 
 target_metadata = {
     "dev": db.metadata,

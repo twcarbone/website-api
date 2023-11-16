@@ -1,12 +1,8 @@
 from __future__ import annotations
 
-import datetime
 import decimal
 import re
-import typing
 
-import bcrypt
-import flask_sqlalchemy
 import sqlalchemy as sa
 import sqlalchemy.ext.declarative as declarative
 import sqlalchemy.orm as orm
@@ -89,88 +85,3 @@ class Base(orm.DeclarativeBase):
     @orm.declared_attr
     def __tablename__(cls) -> str:
         return re.sub(r"(?<!^)(?=[A-Z])", "_", cls.__name__).lower() + "_"
-
-
-db = flask_sqlalchemy.SQLAlchemy(model_class=Base)
-
-
-class User(Base):
-    """
-    Application user.
-    """
-
-    email: orm.Mapped[str_100] = orm.mapped_column(unique=True)
-    pwhash: orm.Mapped[byt_60]
-
-    def __init__(self, email: str, password: str) -> None:
-        self.email = email
-        self.pwhash = User.hashpw(password)
-
-    def __repr__(self: User) -> str:
-        """
-        ** Overrides `Base` **
-
-        Do not show password hash.
-
-        Example:
-        ```
-        >>> User(email="foo@bar.com", password="correct-horse-battery-staple")
-        >>> <User id=1, email='foo@bar.com'>
-        ```
-        """
-        return f"<User id={self.id}, email={self.email!r}>"
-
-    @staticmethod
-    def hashpw(password: str) -> bytes:
-        return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
-
-    def checkpw(self, password: str) -> bool:
-        return bcrypt.checkpw(password.encode("utf-8"), self.pwhash)
-
-
-class PipeSize(Base):
-    """
-    Nominal pipe size and OD in accordance with ANSI B36.10.
-    """
-
-    nps: orm.Mapped[str_20] = orm.mapped_column(unique=True)
-    outer_dia: orm.Mapped[num_6_3]
-
-    _pipeschs: orm.Mapped[list["PipeThkns"]] = orm.relationship(back_populates="_pipesize")
-
-    @staticmethod
-    def inner_dia(nps: str, sch: str) -> decimal.Decimal:
-        """
-        Return calculated inner diameter for the given *nps* and *sch*.
-        """
-        outer_dia, thkns = db.session.execute(
-            db.select(PipeSize.outer_dia, PipeThkns.thkns)
-            .join(PipeSize)
-            .join(PipeSch)
-            .where(PipeSize.nps.like(nps))
-            .where(PipeSch.sch.like(sch))
-        ).one()
-        return outer_dia - 2 * thkns
-
-
-class PipeSch(Base):
-    """
-    Pipe schedules in accordance with ANSI B36.10.
-    """
-
-    sch: orm.Mapped[str_100]
-
-    _pipesizes: orm.Mapped[list["PipeThkns"]] = orm.relationship(back_populates="_pipesch")
-
-
-class PipeThkns(Base):
-    """
-    Pipe wall thickness for pipe NPS and schedule in accordance with ANSI B36.10.
-    """
-
-    pipesize_id: orm.Mapped[int] = orm.mapped_column(sa.ForeignKey(PipeSize.id), primary_key=True)
-    pipesch_id: orm.Mapped[int] = orm.mapped_column(sa.ForeignKey(PipeSch.id), primary_key=True)
-    thkns: orm.Mapped[num_6_3]
-
-    _pipesize: orm.Mapped["PipeSize"] = orm.relationship(back_populates="_pipeschs")
-    _pipesch: orm.Mapped["PipeSch"] = orm.relationship(back_populates="_pipesizes")

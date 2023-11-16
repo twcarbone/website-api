@@ -4,7 +4,7 @@ import pytest
 
 import api
 from api import db
-from api import models
+from api.models.auth import User
 
 import config
 
@@ -40,7 +40,7 @@ def _init_db(_client):
     db.drop_all()
     db.create_all()
 
-    db.session.add(models.User(email="bean@gmail.com", password="catnip"))
+    db.session.add(User(email="bean@gmail.com", password="catnip"))
     db.session.commit()
 
 
@@ -76,4 +76,4 @@ def _new_user_json(_new_user_dict):
 
 @pytest.fixture
 def _new_user(_new_user_dict):
-    return models.User(**_new_user_dict)
+    return User(**_new_user_dict)

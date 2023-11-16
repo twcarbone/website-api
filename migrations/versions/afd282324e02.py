@@ -11,7 +11,9 @@ from typing import Union
 import sqlalchemy as sa
 from alembic import op
 
-import api.models
+from api.models.engdata import PipeSch
+from api.models.engdata import PipeSize
+from api.models.engdata import PipeThkns
 
 # revision identifiers, used by Alembic.
 revision: str = "afd282324e02"
@@ -67,7 +69,7 @@ def _upgrade_schema() -> None:
 
 def _upgrade_data() -> None:
     op.bulk_insert(
-        api.models.PipeSize.__table__,
+        PipeSize.__table__,
         [
             {"id": 1, "nps": "0.125", "outer_dia": 0.405},
             {"id": 2, "nps": "0.250", "outer_dia": 0.54},
@@ -102,7 +104,7 @@ def _upgrade_data() -> None:
     )
 
     op.bulk_insert(
-        api.models.PipeSch.__table__,
+        PipeSch.__table__,
         [
             {"id": 1, "sch": "10"},
             {"id": 2, "sch": "20"},
@@ -121,7 +123,7 @@ def _upgrade_data() -> None:
     )
 
     op.bulk_insert(
-        api.models.PipeThkns.__table__,
+        PipeThkns.__table__,
         [
             {"id": 1, "pipesize_id": 19, "pipesch_id": 1, "thkns": 0.25},
             {"id": 2, "pipesize_id": 20, "pipesch_id": 1, "thkns": 0.25},

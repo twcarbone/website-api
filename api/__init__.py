@@ -10,7 +10,7 @@ import api.models
 import config
 
 jwt = flask_jwt_extended.JWTManager()
-db = api.models.db
+db = flask_sqlalchemy.SQLAlchemy(model_class=api.models.Base)
 
 
 def create_app(config_class=config.ProdConfig):
@@ -33,3 +33,7 @@ def create_app(config_class=config.ProdConfig):
     app.register_blueprint(time_bp, url_prefix="/api")
 
     return app
+
+
+import api.models.auth
+import api.models.engdata

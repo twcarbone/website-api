@@ -3,7 +3,7 @@ Tests for models.
 """
 import decimal
 
-import api.models
+from api.models.engdata import PipeSize
 
 
 class TestUser:
@@ -35,7 +35,7 @@ class TestUser:
 
 class TestPipeSize:
     def test_inner_dia(self, _client):
-        assert api.models.PipeSize.inner_dia(nps="0.250", sch="XS") == decimal.Decimal("0.302")
-        assert api.models.PipeSize.inner_dia(nps="2.500", sch="40") == decimal.Decimal("2.469")
-        assert api.models.PipeSize.inner_dia(nps="10.000", sch="XXS") == decimal.Decimal("8.750")
-        assert api.models.PipeSize.inner_dia(nps="24.000", sch="STD") == decimal.Decimal("23.25")
+        assert PipeSize.inner_dia(nps="0.250", sch="XS") == decimal.Decimal("0.302")
+        assert PipeSize.inner_dia(nps="2.500", sch="40") == decimal.Decimal("2.469")
+        assert PipeSize.inner_dia(nps="10.000", sch="XXS") == decimal.Decimal("8.750")
+        assert PipeSize.inner_dia(nps="24.000", sch="STD") == decimal.Decimal("23.25")
