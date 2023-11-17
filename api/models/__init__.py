@@ -5,6 +5,7 @@ import re
 
 import sqlalchemy as sa
 import sqlalchemy.ext.declarative as declarative
+import sqlalchemy.ext.hybrid as hybrid
 import sqlalchemy.orm as orm
 import typing_extensions
 
