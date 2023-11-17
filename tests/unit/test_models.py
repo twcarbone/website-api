@@ -2,7 +2,12 @@
 Tests for models.
 """
 import decimal
+import re
 
+import pytest
+
+from api import db
+from api import ureg
 from api.models.engdata import PipeSize
 
 
@@ -39,3 +44,23 @@ class TestPipeSize:
         assert PipeSize.inner_dia(nps="2.500", sch="40") == decimal.Decimal("2.469")
         assert PipeSize.inner_dia(nps="10.000", sch="XXS") == decimal.Decimal("8.750")
         assert PipeSize.inner_dia(nps="24.000", sch="STD") == decimal.Decimal("23.25")
+
+    def test_quantity_column(self, _client):
+        """
+        GIVEN a SQLAlchemy mapper with a QuantityColumn
+        WHEN the QuantityColumn is get, set, and queried
+        THEN check to see that it works
+        """
+        pipesize = db.session.get(PipeSize, 1)
+
+        assert pipesize._outer_dia == decimal.Decimal("0.405")
+        assert pipesize.outer_dia == pipesize._outer_dia * ureg.inch
+
+        with pytest.raises(TypeError, match="Must be a Quantity"):
+            pipesize.outer_dia = 5
+
+        with pytest.raises(ValueError, match=re.escape("Quantity must have dimensionality of [length]")):
+            pipesize.outer_dia = 5 * ureg.gram
+
+        pipesize.outer_dia = 1 * ureg.foot
+        assert pipesize.outer_dia == pipesize._outer_dia * ureg.inch

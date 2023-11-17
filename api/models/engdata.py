@@ -3,7 +3,6 @@ from __future__ import annotations
 import decimal
 
 from api import db
-from api import ureg
 from api.models import Base
 from api.models import hybrid
 from api.models import num_6_3
@@ -11,6 +10,8 @@ from api.models import orm
 from api.models import sa
 from api.models import str_20
 from api.models import str_100
+from api.models.quantity import HasQuantityColumn
+from api.models.quantity import QuantityColumn
 
 
 class Unit(Base):
@@ -22,35 +23,17 @@ class Unit(Base):
     long_name: orm.Mapped[str_100] = orm.mapped_column(unique=True)
 
 
-class PipeSize(Base):
+class PipeSize(HasQuantityColumn, Base):
     """
     Nominal pipe size and OD in accordance with ANSI B36.10.
     """
 
     nps: orm.Mapped[str_20] = orm.mapped_column(unique=True)
-    _outer_dia: orm.Mapped[num_6_3] = orm.mapped_column("outer_dia")
+    outer_dia = QuantityColumn("in", sa.Column(sa.Numeric(6, 3), nullable=False))
     outer_dia_unit_id: orm.Mapped[int] = orm.mapped_column(sa.ForeignKey(Unit.id))
 
     _outer_dia_unit: orm.Mapped["Unit"] = orm.relationship()
     _pipethnkss: orm.Mapped[list["PipeThkns"]] = orm.relationship(back_populates="_pipesize")
-
-    @hybrid.hybrid_property
-    def outer_dia(self):
-        return self._outer_dia * getattr(ureg, self._outer_dia_unit.short_name)
-
-    @outer_dia.inplace.expression
-    def outer_dia_expression(self):
-        return self._outer_dia
-
-    @outer_dia.inplace.setter
-    def outer_dia_setter(self, outer_dia):
-        try:
-            if not outer_dia.check("[length]"):
-                raise ValueError("Outer diameter must be a Quantity with dimensionality of [length]")
-        except AttributeError:
-            raise TypeError("Outer diameter must be a Quantity")
-
-        self._outer_dia = outer_dia.to(getattr(ureg, self._outer_dia_unit.short_name))
 
     @staticmethod
     def inner_dia(nps: str, sch: str) -> decimal.Decimal:
@@ -77,14 +60,14 @@ class PipeSch(Base):
     _pipethnkss: orm.Mapped[list["PipeThkns"]] = orm.relationship(back_populates="_pipesch")
 
 
-class PipeThkns(Base):
+class PipeThkns(HasQuantityColumn, Base):
     """
     Pipe wall thickness for pipe NPS and schedule in accordance with ANSI B36.10.
     """
 
     pipesize_id: orm.Mapped[int] = orm.mapped_column(sa.ForeignKey(PipeSize.id), primary_key=True)
     pipesch_id: orm.Mapped[int] = orm.mapped_column(sa.ForeignKey(PipeSch.id), primary_key=True)
-    thkns: orm.Mapped[num_6_3]
+    thkns = QuantityColumn("in", sa.Column(sa.Numeric(6, 3), nullable=False))
     thkns_unit_id: orm.Mapped[int] = orm.mapped_column(sa.ForeignKey(Unit.id))
 
     _thkns_unit: orm.Mapped["Unit"] = orm.relationship()
