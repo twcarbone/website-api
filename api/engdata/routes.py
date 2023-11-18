@@ -5,6 +5,7 @@ from api.errors.handlers import APIError
 from api.models.engdata import PipeSize
 
 
+# TODO: (#8) Create utility for missing GET query parameters
 @bp.route("/innerdia", methods=["GET"])
 def innerdia():
     nps = flask.request.args.get("nps")

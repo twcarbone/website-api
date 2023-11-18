@@ -54,6 +54,7 @@ class PipeSize(HasQuantityColumn, Base):
         except exc.NoResultFound:
             raise ValueError("Invalid NPS or schedule")
         else:
+            # TODO: (#9) Return as different units in PipeSize.inner_dia
             return outer_dia - 2 * thkns
 
 

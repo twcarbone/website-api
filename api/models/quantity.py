@@ -40,6 +40,7 @@ def get_quantity_columns(mapper, cls):
     for attr in dir(cls):
         if isinstance((quantity_column := getattr(cls, attr)), QuantityColumn):
             name = f"_{attr}"
+            # TODO: (#10) Integrate QuantityColumn with corresponding <column>_unit_id
             unit = getattr(ureg, quantity_column.unit)
 
             # Create SQLAlchemy Column. The column is mapped to the database column

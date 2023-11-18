@@ -9,3 +9,5 @@ def test_innerdia(_client):
     response = _client.get("/api/innerdia?nps=not-a-nps&sch=40")
     assert response.status_code == 401
     assert response.json.get("message") == "Invalid 'nps' or 'sch'"
+
+    # TODO: Pending resolution of #8, test for missing query parameters
