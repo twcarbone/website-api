@@ -45,6 +45,11 @@ class TestPipeSize:
         assert PipeSize.inner_dia(nps="10.000", sch="XXS") == decimal.Decimal("8.750")
         assert PipeSize.inner_dia(nps="24.000", sch="STD") == decimal.Decimal("23.25")
 
+        with pytest.raises(ValueError, match="Invalid NPS or schedule"):
+            assert PipeSize.inner_dia(nps="not-a-pipe-nps", sch="STD")
+            assert PipeSize.inner_dia(nps="2.000", sch="not-a-schedule")
+            assert PipeSize.inner_dia(nps="not-a-pipe-nps", sch="not-a-schedule")
+
     def test_quantity_column(self, _client):
         """
         GIVEN a SQLAlchemy mapper with a QuantityColumn

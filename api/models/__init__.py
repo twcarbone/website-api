@@ -4,6 +4,7 @@ import decimal
 import re
 
 import sqlalchemy as sa
+import sqlalchemy.exc as exc
 import sqlalchemy.ext.declarative as declarative
 import sqlalchemy.ext.hybrid as hybrid
 import sqlalchemy.orm as orm
