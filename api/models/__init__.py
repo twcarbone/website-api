@@ -4,7 +4,9 @@ import decimal
 import re
 
 import sqlalchemy as sa
+import sqlalchemy.exc as exc
 import sqlalchemy.ext.declarative as declarative
+import sqlalchemy.ext.hybrid as hybrid
 import sqlalchemy.orm as orm
 import typing_extensions
 
@@ -78,8 +80,11 @@ class Base(orm.DeclarativeBase):
         >>> ['id', 'name', 'breed']
         ```
         """
-        columns = self.__table__.columns.keys()
-        columns.insert(0, columns.pop(columns.index("id")))  # Ensure 'id' is at front
+        # Get the identifier of each database column, not necessarily the python key.
+        columns = [column.name for column in self.__table__.columns.values()]
+
+        # Ensure 'id' is at front
+        columns.insert(0, columns.pop(columns.index("id")))
         return columns
 
     @orm.declared_attr
