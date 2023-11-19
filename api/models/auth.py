@@ -6,9 +6,10 @@ from api.models import Base
 from api.models import byt_60
 from api.models import orm
 from api.models import str_100
+from api.models.query import QueryMixin
 
 
-class User(Base):
+class User(QueryMixin, Base):
     """
     Application user.
     """

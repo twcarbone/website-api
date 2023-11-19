@@ -42,7 +42,7 @@ def login():
     email = flask.request.json.get("email")
     password = flask.request.json.get("password")
 
-    user = db.session.execute(db.select(User).filter_by(email=email)).scalar()
+    user = User.scalar_one_or_none(email=email)
 
     if user is None or not user.checkpw(password):
         raise APIError("Wrong email or password", status_code=401)
