@@ -70,6 +70,19 @@ class Base(orm.DeclarativeBase):
         column_kvs = ", ".join([f"{c}={getattr(self, c)!r}" for c in self._columns()])
         return f"<{class_name} {column_kvs}>"
 
+    def __eq__(a, b) -> bool:
+        """
+        Return True if all database column values for *a* and *b* are equal.
+        """
+        if (a_columns := a._columns()) != (b_columns := b._columns()):
+            return False
+
+        for a_column, b_column in zip(a_columns, b_columns):
+            if getattr(a, a_column) != getattr(b, b_column):
+                return False
+
+        return True
+
     def _columns(self: Base) -> list[str]:
         """
         Return all column names of *self* with 'id' column at front.

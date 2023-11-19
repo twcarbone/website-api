@@ -23,6 +23,23 @@ class TestBase:
         assert _pipesize.__repr__() == "<PipeSize id=10, nps='2.500', outer_dia_unit_id=1, outer_dia=<Quantity(2.875, 'inch')>>"
         # fmt: on
 
+    def test_eq(self):
+        """
+        GIVEN a model derived from Base
+        WHEN __eq__ is called
+        THEN check for correct equality evaluation
+        """
+        # PipeSize
+        pipesize1 = PipeSize(id=50, nps="100.000", outer_dia=120 * ureg.inch, outer_dia_unit_id=1)
+        pipesize2 = PipeSize(id=50, nps="100.000", outer_dia=120 * ureg.inch, outer_dia_unit_id=1)
+        pipesize3 = PipeSize(id=50, nps="100.000", outer_dia=121 * ureg.inch, outer_dia_unit_id=1)
+        pipesize4 = PipeSize(id=50, nps="100.000", outer_dia=120 * ureg.mm, outer_dia_unit_id=1)
+        pipesize5 = PipeSize(id=50, nps="100.000", outer_dia=120 * ureg.inch, outer_dia_unit_id=2)
+        assert pipesize1 == pipesize2
+        assert pipesize1 != pipesize3
+        assert pipesize1 != pipesize4
+        assert pipesize1 != pipesize5
+
 
 class TestUser:
     def test_init(self, _new_user):
