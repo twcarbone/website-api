@@ -5,6 +5,7 @@ import pytest
 import api
 from api import db
 from api.models.auth import User
+from api.models.engdata import PipeSize
 
 import config
 
@@ -83,3 +84,13 @@ def _new_user_json(_new_user_dict):
 @pytest.fixture
 def _new_user(_new_user_dict):
     return User(**_new_user_dict)
+
+
+# -----------------
+# PipeSize fixtures
+# -----------------
+
+
+@pytest.fixture
+def _pipesize(_client):
+    return db.session.get(PipeSize, 10)

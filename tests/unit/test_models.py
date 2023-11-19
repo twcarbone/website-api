@@ -11,6 +11,19 @@ from api import ureg
 from api.models.engdata import PipeSize
 
 
+class TestBase:
+    def test_repr(self, _new_user, _pipesize):
+        """
+        GIVEN a model derived from Base
+        WHEN __repr__ is called
+        THEN check for correct representation
+        """
+        # fmt: off
+        assert _new_user.__repr__() == "<User id=None, email='cheese@gmail.com'>"
+        assert _pipesize.__repr__() == "<PipeSize id=10, nps='2.500', outer_dia_unit_id=1, outer_dia=<Quantity(2.875, 'inch')>>"
+        # fmt: on
+
+
 class TestUser:
     def test_init(self, _new_user):
         """
@@ -20,14 +33,6 @@ class TestUser:
         """
         assert _new_user.email == "cheese@gmail.com"
         assert _new_user.pwhash != "my-favorite-bone"
-
-    def test_repr(self, _new_user):
-        """
-        GIVEN a User model
-        WHEN a new User is created
-        THEN check __repr__ returns the correct representation
-        """
-        assert _new_user.__repr__() == "<User id=None, email='cheese@gmail.com'>"
 
     def test_chekpw(self, _new_user):
         """
