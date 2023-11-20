@@ -11,8 +11,8 @@ from api.models import orm
 from api.models import sa
 from api.models import str_20
 from api.models import str_100
-from api.models.quantity import HasQuantityColumn
 from api.models.quantity import QuantityColumn
+from api.models.quantity import QuantityColumnMixin
 from api.models.query import QueryMixin
 
 
@@ -25,7 +25,7 @@ class Unit(Base):
     long_name: orm.Mapped[str_100] = orm.mapped_column(unique=True)
 
 
-class PipeSize(QueryMixin, HasQuantityColumn, Base):
+class PipeSize(QueryMixin, QuantityColumnMixin, Base):
     """
     Nominal pipe size and OD in accordance with ANSI B36.10.
     """
@@ -69,7 +69,7 @@ class PipeSch(Base):
     _pipethnkss: orm.Mapped[list["PipeThkns"]] = orm.relationship(back_populates="_pipesch")
 
 
-class PipeThkns(QueryMixin, HasQuantityColumn, Base):
+class PipeThkns(QueryMixin, QuantityColumnMixin, Base):
     """
     Pipe wall thickness for pipe NPS and schedule in accordance with ANSI B36.10.
     """

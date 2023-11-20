@@ -8,7 +8,7 @@ from api.models import hybrid
 from api.models import sa
 
 
-class HasQuantityColumn:
+class QuantityColumnMixin:
     """
     Mixed-in classes have an event listener configured for 'mapper_configured'.
     """
@@ -37,10 +37,10 @@ class QuantityColumn(object):
         self.column = column
 
 
-@sa.event.listens_for(HasQuantityColumn, "mapper_configured", propagate=True)
+@sa.event.listens_for(QuantityColumnMixin, "mapper_configured", propagate=True)
 def get_quantity_columns(mapper, cls):
     """
-    Scans each attribute of models inheriting from 'HasQuantityColumn'. For any
+    Scans each attribute of models inheriting from 'QuantityColumnMixin'. For any
     attribute of type 'QuantityColumn', create a mapped column and hybrid
     getter/setter/expression methods.
 
