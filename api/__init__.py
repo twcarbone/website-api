@@ -43,3 +43,4 @@ def create_app(config_class=config.ProdConfig):
 
 import api.models.auth
 import api.models.engdata
+import api.models.grocery
