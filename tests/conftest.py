@@ -4,7 +4,8 @@ import pytest
 
 import api
 from api import db
-from api import models
+from api.models.auth import User
+from api.models.engdata import PipeSize
 
 import config
 
@@ -37,10 +38,16 @@ def _runner(_app):
 
 @pytest.fixture
 def _init_db(_client):
-    db.drop_all()
-    db.create_all()
+    """
+    Initialize the test database to support testing.
 
-    db.session.add(models.User(email="bean@gmail.com", password="catnip"))
+    Drop and re-create tables, add mock data, etc.
+    """
+    # Only drop/create the necessary tables
+    User.__table__.drop(db.engine)
+    User.__table__.create(db.engine)
+
+    db.session.add(User(email="bean@gmail.com", password="catnip"))
     db.session.commit()
 
 
@@ -76,4 +83,14 @@ def _new_user_json(_new_user_dict):
 
 @pytest.fixture
 def _new_user(_new_user_dict):
-    return models.User(**_new_user_dict)
+    return User(**_new_user_dict)
+
+
+# -----------------
+# PipeSize fixtures
+# -----------------
+
+
+@pytest.fixture
+def _pipesize(_client):
+    return db.session.get(PipeSize, 10)

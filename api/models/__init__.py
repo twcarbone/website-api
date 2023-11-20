@@ -1,13 +1,12 @@
 from __future__ import annotations
 
-import datetime
 import decimal
 import re
-import typing
 
-import bcrypt
 import sqlalchemy as sa
+import sqlalchemy.exc as exc
 import sqlalchemy.ext.declarative as declarative
+import sqlalchemy.ext.hybrid as hybrid
 import sqlalchemy.orm as orm
 import typing_extensions
 
@@ -17,6 +16,7 @@ str_20 = typing_extensions.Annotated[str, 20]
 str_100 = typing_extensions.Annotated[str, 100]
 str_500 = typing_extensions.Annotated[str, 500]
 byt_60 = typing_extensions.Annotated[bytes, 60]
+num_6_3 = typing_extensions.Annotated[decimal.Decimal, 6]
 
 
 def engine(user: str, password: str, host: str, port: int, database: str):
@@ -49,6 +49,7 @@ class Base(orm.DeclarativeBase):
             str_100: sa.String(100),
             str_500: sa.String(500),
             byt_60: sa.LargeBinary(60),
+            num_6_3: sa.Numeric(6, 3),
         }
     )
 
@@ -69,6 +70,26 @@ class Base(orm.DeclarativeBase):
         column_kvs = ", ".join([f"{c}={getattr(self, c)!r}" for c in self._columns()])
         return f"<{class_name} {column_kvs}>"
 
+    def __eq__(a, b) -> bool:
+        """
+        Return True if all database column values for *a* and *b* are equal.
+        """
+        if (a_columns := a._columns()) != (b_columns := b._columns()):
+            return False
+
+        for a_column, b_column in zip(a_columns, b_columns):
+            if getattr(a, a_column) != getattr(b, b_column):
+                return False
+
+        return True
+
+    def serialize(self) -> dict:
+        return {c: getattr(self, c) for c in self._columns()}
+
+    @staticmethod
+    def serialize_sequence(items: list[Base]) -> list[dict]:
+        return [item.serialize() for item in items]
+
     def _columns(self: Base) -> list[str]:
         """
         Return all column names of *self* with 'id' column at front.
@@ -79,44 +100,13 @@ class Base(orm.DeclarativeBase):
         >>> ['id', 'name', 'breed']
         ```
         """
-        columns = self.__table__.columns.keys()
-        columns.insert(0, columns.pop(columns.index("id")))  # Ensure 'id' is at front
+        # Get the identifier of each database column, not necessarily the python key.
+        columns = [column.name for column in self.__table__.columns.values()]
+
+        # Ensure 'id' is at front
+        columns.insert(0, columns.pop(columns.index("id")))
         return columns
 
     @orm.declared_attr
     def __tablename__(cls) -> str:
         return re.sub(r"(?<!^)(?=[A-Z])", "_", cls.__name__).lower() + "_"
-
-
-class User(Base):
-    """
-    Application user.
-    """
-
-    email: orm.Mapped[str_100] = orm.mapped_column(unique=True)
-    pwhash: orm.Mapped[byt_60]
-
-    def __init__(self, email: str, password: str) -> None:
-        self.email = email
-        self.pwhash = User.hashpw(password)
-
-    def __repr__(self: User) -> str:
-        """
-        ** Overrides `Base` **
-
-        Do not show password hash.
-
-        Example:
-        ```
-        >>> User(email="foo@bar.com", password="correct-horse-battery-staple")
-        >>> <User id=1, email='foo@bar.com'>
-        ```
-        """
-        return f"<User id={self.id}, email={self.email!r}>"
-
-    @staticmethod
-    def hashpw(password: str) -> bytes:
-        return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
-
-    def checkpw(self, password: str) -> bool:
-        return bcrypt.checkpw(password.encode("utf-8"), self.pwhash)

@@ -3,7 +3,7 @@ import uuid
 import flask_jwt_extended
 
 from api import db
-from api import models
+from api.models.auth import User
 
 # ------------
 # Test helpers
@@ -33,13 +33,13 @@ def test_register(_init_db, _client, _new_user_dict):
     response = _client.post("/api/register", json=_new_user_dict)
     assert response.status_code == 200
 
-    user = db.session.get(models.User, 2)
+    user = db.session.get(User, 2)
     assert user.id == 2
     assert user.email == "cheese@gmail.com"
     assert type(user.pwhash) == bytes
     assert len(user.pwhash) == 60
 
-    assert db.session.get(models.User, 3) is None
+    assert db.session.get(User, 3) is None
 
 
 def test_register_missing_params(_init_db, _client):
