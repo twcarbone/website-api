@@ -13,7 +13,18 @@ class HasQuantityColumn:
     Mixed-in classes have an event listener configured for 'mapper_configured'.
     """
 
-    pass
+    def serialize(self) -> dict:
+        """
+        ** Overrides `api.models.Base` **
+
+        Correct any column that is `pint.Quantity[decimal.Decimal]` to float.
+        """
+        serialized = {}
+        for c in self._columns():
+            if isinstance((v := getattr(self, c)), pint.Quantity):
+                v = float(v.magnitude)
+            serialized[c] = v
+        return serialized
 
 
 class QuantityColumn(object):

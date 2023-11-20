@@ -40,6 +40,17 @@ class TestBase:
         assert pipesize1 != pipesize4
         assert pipesize1 != pipesize5
 
+    def test_serialize(self, _new_user, _pipesize):
+        assert _pipesize.serialize() == {"id": 10, "nps": "2.500", "outer_dia": 2.875, "outer_dia_unit_id": 1}
+
+    def test_serialize_sequence(self, _client):
+        pipesize1 = db.session.get(PipeSize, 1)
+        pipesize2 = db.session.get(PipeSize, 2)
+        assert PipeSize.serialize_sequence([pipesize1, pipesize2]) == [
+            {"id": 1, "nps": "0.125", "outer_dia": 0.405, "outer_dia_unit_id": 1},
+            {"id": 2, "nps": "0.250", "outer_dia": 0.540, "outer_dia_unit_id": 1},
+        ]
+
 
 class TestUser:
     def test_init(self, _new_user):

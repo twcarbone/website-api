@@ -83,6 +83,13 @@ class Base(orm.DeclarativeBase):
 
         return True
 
+    def serialize(self) -> dict:
+        return {c: getattr(self, c) for c in self._columns()}
+
+    @staticmethod
+    def serialize_sequence(items: list[Base]) -> list[dict]:
+        return [item.serialize() for item in items]
+
     def _columns(self: Base) -> list[str]:
         """
         Return all column names of *self* with 'id' column at front.
