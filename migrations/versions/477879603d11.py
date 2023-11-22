@@ -5,13 +5,20 @@ Revises: 01699e6d9ad6
 Create Date: 2023-11-20 16:28:04.294687
 
 """
+import datetime
+import decimal
 from typing import Sequence
 from typing import Union
 
 import sqlalchemy as sa
 from alembic import op
 
+from api.models.grocery import ShopriteDiscount
+from api.models.grocery import ShopriteOrder
+from api.models.grocery import ShopriteProduct
+from api.models.grocery import ShopriteProductDetail
 from api.models.grocery import ShopriteRateType
+from api.models.grocery import ShopriteTransaction
 
 # revision identifiers, used by Alembic.
 revision: str = "477879603d11"
@@ -131,6 +138,96 @@ def _upgrade_data() -> None:
     )
 
 
+def _upgrade_test_data() -> None:
+    op.bulk_insert(
+        ShopriteOrder.__table__,
+        [
+            {"id": 1, "date": datetime.date(2023, 4, 30)},
+            {"id": 2, "date": datetime.date(2023, 6, 12)},
+        ],
+    )
+
+    op.bulk_insert(
+        ShopriteProduct.__table__,
+        [
+            {"id": 1, "code": "4011", "name": "BANANA BAG #3"},
+            {"id": 2, "code": "4119041073", "name": "SRBB FRZ BLUEBERRI"},
+            {"id": 3, "code": "7103800044", "name": "Chock full o'Nuts Medium Original Ground Coffee"},
+        ],
+    )
+
+    op.bulk_insert(
+        ShopriteProductDetail.__table__,
+        [
+            {
+                "id": 1,
+                "shopriteproduct_id": 1,
+                "name": "Yellow Banana, 1 ct, 4 oz",
+                "description": "Put peanut butter on me!",
+                "brand": "Fresh",
+                "sku": "00000000040112",
+            },
+            {
+                "id": 2,
+                "shopriteproduct_id": 2,
+                "name": "Bowl & Basket Blueberries, 48 oz",
+                "description": "Make a pie with me!",
+                "brand": "Bowl & Basket",
+                "sku": "00041190410736",
+            },
+        ],
+    )
+
+    op.bulk_insert(
+        ShopriteTransaction.__table__,
+        [
+            {
+                "id": 1,
+                "shopriteorder_id": 1,
+                "shopriteproduct_id": 1,
+                "shopriteratetype_id": 1,
+                "rate": decimal.Decimal("0.69"),
+                "qty": decimal.Decimal("2.48"),
+                "final": decimal.Decimal("1.71"),
+            },
+            {
+                "id": 2,
+                "shopriteorder_id": 1,
+                "shopriteproduct_id": 2,
+                "shopriteratetype_id": 2,
+                "rate": decimal.Decimal("9.99"),
+                "qty": decimal.Decimal("1.00"),
+                "final": decimal.Decimal("9.99"),
+            },
+            {
+                "id": 3,
+                "shopriteorder_id": 2,
+                "shopriteproduct_id": 1,
+                "shopriteratetype_id": 1,
+                "rate": decimal.Decimal("0.69"),
+                "qty": decimal.Decimal("1.59"),
+                "final": decimal.Decimal("1.10"),
+            },
+            {
+                "id": 4,
+                "shopriteorder_id": 2,
+                "shopriteproduct_id": 3,
+                "shopriteratetype_id": 2,
+                "rate": decimal.Decimal("11.99"),
+                "qty": decimal.Decimal("1.00"),
+                "final": decimal.Decimal("11.99"),
+            },
+        ],
+    )
+
+    op.bulk_insert(
+        ShopriteDiscount.__table__,
+        [
+            {"id": 1, "shopritetransaction_id": 4, "amount": decimal.Decimal("2.00")},
+        ],
+    )
+
+
 def _upgrade() -> None:
     _upgrade_schema()
     _upgrade_data()
@@ -157,6 +254,7 @@ def downgrade_dev() -> None:
 
 def upgrade_test() -> None:
     _upgrade()
+    _upgrade_test_data()
 
 
 def downgrade_test() -> None:
