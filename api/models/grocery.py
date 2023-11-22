@@ -28,6 +28,8 @@ class _ShopriteBase(QueryMixin, Base):
     __abstract__ = True
     __table_args__ = {"schema": "grocery"}
 
+    id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
+
 
 class ShopriteRateType(_ShopriteBase):
     PER_LB = 1

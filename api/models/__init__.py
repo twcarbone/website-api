@@ -58,8 +58,6 @@ class Base(orm.DeclarativeBase):
         }
     )
 
-    id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
-
     def __repr__(self: Base) -> str:
         """
         Return '<TableName column1=value1, column2=value2, column3=value3>'
