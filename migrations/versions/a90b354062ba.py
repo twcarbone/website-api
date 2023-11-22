@@ -58,10 +58,35 @@ def _upgrade() -> None:
         """
     )
 
+    op.execute(
+        """
+        create view grocery.transaction_view_ as
+            select
+                st.id as id,
+                so.date as date,
+                spd.sku as sku,
+                sp.name as short_name,
+                spd.name as long_name,
+                st.rate as rate,
+                srt.rate as rate_type,
+                st.qty as qty,
+                sd.amount as discount,
+                st.final as final
+            from
+                grocery.shoprite_transaction_ st
+                join grocery.shoprite_order_ so on st.shopriteorder_id = so.id
+                join grocery.shoprite_product_ sp on st.shopriteproduct_id = sp.id
+                join grocery.shoprite_rate_type_ srt on st.shopriteratetype_id = srt.id
+                left outer join grocery.shoprite_discount_ sd on sd.shopritetransaction_id = st.id
+                left outer join grocery.shoprite_product_detail_ spd on spd.shopriteproduct_id = sp.id
+        """
+    )
+
 
 def _downgrade() -> None:
     op.execute("drop view grocery.product_view_")
     op.execute("drop view grocery.order_view_")
+    op.execute("drop view grocery.transaction_view_")
 
 
 def upgrade_dev() -> None:

@@ -94,6 +94,19 @@ class OrderView(_ViewBase):
     order_total = sa.Column(sa.Numeric())
 
 
+class TransactionView(_ViewBase):
+    id = sa.Column(sa.Integer(), primary_key=True)
+    date = sa.Column(sa.Date())
+    sku = sa.Column(sa.String(20))
+    short_name = sa.Column(sa.String(100))
+    long_name = sa.Column(sa.String(100))
+    rate = sa.Column(sa.Numeric(8, 2))
+    rate_type = sa.Column(sa.String(20))
+    qty = sa.Column(sa.Numeric(6, 3))
+    discount = sa.Column(sa.Numeric(8, 2))
+    final = sa.Column(sa.Numeric(8, 2))
+
+
 # -----
 # Other
 # -----
