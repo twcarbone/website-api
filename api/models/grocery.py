@@ -67,6 +67,39 @@ class ShopriteDiscount(_ShopriteBase):
     amount: orm.Mapped[money]
 
 
+# -----
+# Views
+# -----
+
+
+ProductView = sa.Table(
+    "product_view_",
+    db.metadata,
+    sa.Column("id", sa.Integer()),
+    sa.Column("sku", sa.String(20)),
+    sa.Column("short_name", sa.String(100)),
+    sa.Column("long_name", sa.String(100)),
+    sa.Column("brand", sa.String(500)),
+    sa.Column("description", sa.String(500)),
+    schema="grocery",
+)
+
+
+OrderView = sa.Table(
+    "order_view_",
+    db.metadata,
+    sa.Column("id", sa.Integer()),
+    sa.Column("date", sa.Date()),
+    sa.Column("order_total", sa.Numeric()),
+    schema="grocery",
+)
+
+
+# -----
+# Other
+# -----
+
+
 class ShopriteReceiptParser:
     MONEY_REGEX = "\$(\d+\.\d{2})"
 
