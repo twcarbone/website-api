@@ -74,27 +74,24 @@ class ShopriteDiscount(_ShopriteBase):
 # -----
 
 
-ProductView = sa.Table(
-    "product_view_",
-    db.metadata,
-    sa.Column("id", sa.Integer()),
-    sa.Column("sku", sa.String(20)),
-    sa.Column("short_name", sa.String(100)),
-    sa.Column("long_name", sa.String(100)),
-    sa.Column("brand", sa.String(500)),
-    sa.Column("description", sa.String(500)),
-    schema="grocery",
-)
+class _ViewBase(QueryMixin, Base):
+    __abstract__ = True
+    __table_args__ = {"schema": "grocery"}
 
 
-OrderView = sa.Table(
-    "order_view_",
-    db.metadata,
-    sa.Column("id", sa.Integer()),
-    sa.Column("date", sa.Date()),
-    sa.Column("order_total", sa.Numeric()),
-    schema="grocery",
-)
+class ProductView(_ViewBase):
+    id = sa.Column(sa.Integer(), primary_key=True)
+    sku = sa.Column(sa.String(20))
+    short_name = sa.Column(sa.String(100))
+    long_name = sa.Column(sa.String(100))
+    brand = sa.Column(sa.String(500))
+    description = sa.Column(sa.String(500))
+
+
+class OrderView(_ViewBase):
+    id = sa.Column(sa.Integer(), primary_key=True)
+    date = sa.Column(sa.Date())
+    order_total = sa.Column(sa.Numeric())
 
 
 # -----
