@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import datetime
 import decimal
 import re
 
@@ -17,6 +18,8 @@ str_100 = typing_extensions.Annotated[str, 100]
 str_500 = typing_extensions.Annotated[str, 500]
 byt_60 = typing_extensions.Annotated[bytes, 60]
 num_6_3 = typing_extensions.Annotated[decimal.Decimal, 6]
+money = typing_extensions.Annotated[decimal.Decimal, 6]
+date = typing_extensions.Annotated[datetime.date, None]
 
 
 def engine(user: str, password: str, host: str, port: int, database: str):
@@ -50,10 +53,10 @@ class Base(orm.DeclarativeBase):
             str_500: sa.String(500),
             byt_60: sa.LargeBinary(60),
             num_6_3: sa.Numeric(6, 3),
+            money: sa.Numeric(8, 2),  # Max $ 999,999.99
+            date: sa.Date(),
         }
     )
-
-    id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
 
     def __repr__(self: Base) -> str:
         """

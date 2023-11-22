@@ -16,7 +16,13 @@ from api.models.quantity import QuantityColumnMixin
 from api.models.query import QueryMixin
 
 
-class Unit(Base):
+class _EngDataBase(QueryMixin, Base):
+    __abstract__ = True
+
+    id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
+
+
+class Unit(_EngDataBase):
     """
     Scientific Units.
     """
@@ -25,7 +31,7 @@ class Unit(Base):
     long_name: orm.Mapped[str_100] = orm.mapped_column(unique=True)
 
 
-class PipeSize(QueryMixin, QuantityColumnMixin, Base):
+class PipeSize(QuantityColumnMixin, _EngDataBase):
     """
     Nominal pipe size and OD in accordance with ANSI B36.10.
     """
@@ -59,7 +65,7 @@ class PipeSize(QueryMixin, QuantityColumnMixin, Base):
             return outer_dia - 2 * thkns
 
 
-class PipeSch(Base):
+class PipeSch(_EngDataBase):
     """
     Pipe schedules in accordance with ANSI B36.10.
     """
@@ -69,7 +75,7 @@ class PipeSch(Base):
     _pipethnkss: orm.Mapped[list["PipeThkns"]] = orm.relationship(back_populates="_pipesch")
 
 
-class PipeThkns(QueryMixin, QuantityColumnMixin, Base):
+class PipeThkns(QuantityColumnMixin, _EngDataBase):
     """
     Pipe wall thickness for pipe NPS and schedule in accordance with ANSI B36.10.
     """

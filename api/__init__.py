@@ -34,6 +34,10 @@ def create_app(config_class=config.ProdConfig):
 
     app.register_blueprint(engdata_bp, url_prefix="/api")
 
+    from api.grocery import bp as grocery_bp
+
+    app.register_blueprint(grocery_bp, url_prefix="/api")
+
     from api.time import bp as time_bp
 
     app.register_blueprint(time_bp, url_prefix="/api")
@@ -43,3 +47,4 @@ def create_app(config_class=config.ProdConfig):
 
 import api.models.auth
 import api.models.engdata
+import api.models.grocery

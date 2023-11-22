@@ -14,6 +14,7 @@ class User(QueryMixin, Base):
     Application user.
     """
 
+    id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
     email: orm.Mapped[str_100] = orm.mapped_column(unique=True)
     pwhash: orm.Mapped[byt_60]
 
