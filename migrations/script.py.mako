@@ -29,8 +29,17 @@ def downgrade(engine_name: str) -> None:
     globals()["downgrade_%s" % engine_name]()
 
 
-def _upgrade() -> None:
+def _upgrade_schema() -> None:
     ${context.get("dev_upgrades")}
+
+
+def _upgrade_data() -> None:
+    pass
+
+
+def _upgrade() -> None:
+    _upgrade_schema()
+    _upgrade_data()
 
 
 def _downgrade() -> None:
