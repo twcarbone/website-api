@@ -4,8 +4,8 @@ server {
 	root /var/www/website-prod;
 	index index.html;
 
-	access_log /var/log/nginx/website-prod.access.log;
-	error_log /var/log/nginx/website-prod.error.log;
+	access_log /var/log/website/nginx.access.log;
+	error_log /var/log/website/nginx.error.log;
 
 	location / {
 		try_files $uri $uri/ =404;
@@ -22,8 +22,8 @@ server {
 	root /var/www/website-dev;
 	index index.html;
 
-	access_log /var/log/nginx/website-dev.access.log;
-	error_log /var/log/nginx/website-dev.error.log;
+	access_log /var/log/website/nginx-dev.access.log;
+	error_log /var/log/website/nginx-dev.error.log;
 
 	location / {
 		try_files $uri $uri/ =404;

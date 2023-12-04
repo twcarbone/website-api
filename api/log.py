@@ -22,7 +22,7 @@ _logging_config = {
             "class": "logging.handlers.RotatingFileHandler",
             "formatter": "standard",
             "level": "INFO",
-            "filename": "/home/tcarbone/website-api/logs/flask.log",
+            "filename": "/var/log/website/flask.log",
             "mode": "a",
             "encoding": "utf-8",
             "maxBytes": 500000,
