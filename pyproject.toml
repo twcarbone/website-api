@@ -5,4 +5,3 @@ line-length = 120
 src_paths = ["api", "migrations", "scripts", "tests"]
 known_local_folder = ["config"]
 force_single_line = true
-
