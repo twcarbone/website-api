@@ -87,10 +87,32 @@ class Base(orm.DeclarativeBase):
         return True
 
     def serialize(self) -> dict:
+        """
+        Return dict representation of *self*.
+
+        Example:
+        ```
+        >>> Person()
+        >>> <Person id=1, firstname='Foo', lastname='Bar'>
+        >>> Person().serialize()
+        >>> {'id': 1, 'firstname': 'Foo', 'lastname': 'bar'}
+        ```
+        """
         return {c: getattr(self, c) for c in self._columns()}
 
     @staticmethod
     def serialize_sequence(items: list[Base]) -> list[dict]:
+        """
+        Return list of dict representations of each item in *items*.
+
+        Example:
+        ```
+        >>> p1 = Person(name='Foo')
+        >>> p2 = Person(name='Bar')
+        >>> Base.serialize_sequence([p1, p2])
+        >>> [{'id': 1, 'name': 'Foo'}, {'id': 1, 'name': 'Bar'}]
+        ```
+        """
         return [item.serialize() for item in items]
 
     def _columns(self: Base) -> list[str]:
