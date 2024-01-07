@@ -38,7 +38,7 @@ class QueryMixin:
         Return exactly one scalar result.
 
         Raises `NoResultFound` if no results found.
-        Raises `MultipleRestulsFound` if multiple results found.
+        Raises `MultipleResultsFound` if multiple results found.
         """
         return cls._result(column, None, **kwargs).scalar_one()
 
@@ -47,6 +47,6 @@ class QueryMixin:
         """
         Return exactly one scalar result or None.
 
-        Raises `MultipleRestulsFound` if multiple results found.
+        Raises `MultipleResultsFound` if multiple results found.
         """
         return cls._result(column, None, **kwargs).scalar_one_or_none()
