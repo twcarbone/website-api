@@ -1,4 +1,5 @@
 import flask
+from flask import request
 
 from api.errors.handlers import APIError
 from api.grocery import bp
@@ -10,7 +11,7 @@ from api.models.grocery import TransactionView
 
 @bp.route("/products", methods=["GET"])
 def products():
-    return flask.jsonify(ProductView.serialize_sequence(ProductView.scalars()))
+    return flask.jsonify(ProductView.serialize_sequence(ProductView.scalars(**request.args)))
 
 
 @bp.route("/product/<int:id>", methods=["GET"])
@@ -23,7 +24,7 @@ def product(id):
 
 @bp.route("/orders", methods=["GET"])
 def orders():
-    return flask.jsonify(OrderView.serialize_sequence(OrderView.scalars()))
+    return flask.jsonify(OrderView.serialize_sequence(OrderView.scalars(**request.args)))
 
 
 @bp.route("/order/<int:id>", methods=["GET"])
@@ -36,7 +37,7 @@ def order(id):
 
 @bp.route("/transactions", methods=["GET"])
 def transactions():
-    return flask.jsonify(TransactionView.serialize_sequence(TransactionView.scalars()))
+    return flask.jsonify(TransactionView.serialize_sequence(TransactionView.scalars(**request.args)))
 
 
 @bp.route("/transaction/<int:id>", methods=["GET"])
