@@ -1,5 +1,11 @@
 from __future__ import annotations
 
+import csv
+import datetime
+import logging
+import pathlib
+
+from api import db
 from api.models import Base
 from api.models import date
 from api.models import money
@@ -14,6 +20,12 @@ from api.models.query import QueryMixin
 class _CapitalOneBase(QueryMixin, Base):
     __abstract__ = True
     __table_args__ = {"schema": "capitalone"}
+
+    @classmethod
+    def print_choices(cls):
+        models = cls.scalars(order_by="name")
+        for a, b, c in zip(models[::3], models[1::3], models[2::3]):
+            print(f"{a.name:<40}{b.name:<40}{c.name:<}")
 
 
 class Card(_CapitalOneBase):
@@ -55,3 +67,71 @@ class Transaction(_CapitalOneBase):
     description_id: orm.Mapped[int] = orm.mapped_column(sa.ForeignKey(Description.id))
     transactiontype_id: orm.Mapped[int] = orm.mapped_column(sa.ForeignKey(TransactionType.id))
     amount: orm.Mapped[money]
+
+
+class TransactionCSVParser:
+    @staticmethod
+    def choose_category():
+        while True:
+            choice = input(f"Enter category (L to show all): ")
+            if choice == "L":
+                Category.print_choices()
+
+            elif (category := Category.scalar_one_or_none(name=choice)) is not None:
+                return category.id
+
+            else:
+                print(f"{choice!r} not found. Try again")
+
+    @staticmethod
+    def choose_merchant():
+        while True:
+            choice = input("Enter Merchant (L to show all, N to create new): ")
+            if choice == "L":
+                Merchant.print_choices()
+
+            elif choice == "N":
+                merchant = Merchant(
+                    name=input("Enter new Merchant name: "),
+                    category_id=TransactionCSVParser.choose_category(),
+                )
+                db.session.add(merchant)
+                db.session.flush()
+                return merchant.id
+
+            elif (merchant := Merchant.scalar_one_or_none(name=choice)) is not None:
+                return merchant.id
+
+            else:
+                print(f"{choice!r} not found. Try again")
+
+    @staticmethod
+    def main(path: pathlib.Path):
+        logging.info(f"Parsing {path!r}")
+
+        with open(path, "r") as f:
+            rows = [row for row in csv.DictReader(f)]
+
+        for row in rows:
+            card = Card.scalar_one(number=row["Card No."])
+
+            if (description := Description.scalar_one_or_none(name=row["Description"])) is None:
+                print(f"{row['Description']!r} has no matching <Description>")
+                description = Description(
+                    name=row["Description"],
+                    merchant_id=TransactionCSVParser.choose_merchant(),
+                )
+                db.session.add(description)
+                db.session.flush()
+
+            transaction = Transaction(
+                date=datetime.datetime.strptime(row["Transaction Date"], "%Y-%m-%d"),
+                post_date=datetime.datetime.strptime(row["Posted Date"], "%Y-%m-%d"),
+                card_id=card.id,
+                description_id=description.id,
+                transactiontype_id=TransactionType.DEBIT if row["Debit"] else TransactionType.CREDIT,
+                amount=row["Debit"] or row["Credit"],
+            )
+
+            db.session.add(transaction)
+        db.session.commit()
