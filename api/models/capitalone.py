@@ -69,6 +69,29 @@ class Transaction(_CapitalOneBase):
     amount: orm.Mapped[money]
 
 
+# -----
+# Views
+# -----
+
+
+class TransactionView(_CapitalOneBase):
+    id = sa.Column(sa.Integer(), primary_key=True)
+    date = sa.Column(sa.Date())
+    post_date = sa.Column(sa.Date())
+    card_number = sa.Column(sa.String(100))
+    card_name = sa.Column(sa.String(100))
+    merchant = sa.Column(sa.String(100))
+    category = sa.Column(sa.String(100))
+    transaction_type = sa.Column(sa.String(100))
+    amount = sa.Column(sa.Numeric(8, 2))
+
+
+class MerchantView(_CapitalOneBase):
+    id = sa.Column(sa.Integer(), primary_key=True)
+    merchant = sa.Column(sa.String(100))
+    category = sa.Column(sa.String(100))
+
+
 class TransactionCSVParser:
     @staticmethod
     def choose_category():
