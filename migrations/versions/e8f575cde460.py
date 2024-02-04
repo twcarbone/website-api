@@ -138,16 +138,16 @@ def _sync_sequences():
 
 
 def _upgrade_dev_prod_data() -> None:
-    with open("./data/Card.csv", "r") as f:
+    with open("./migrations/data/Card.csv", "r") as f:
         op.bulk_insert(Card.__table__, [row for row in csv.DictReader(f)])
 
-    with open("./data/Category.csv", "r") as f:
+    with open("./migrations/data/Category.csv", "r") as f:
         op.bulk_insert(Category.__table__, [row for row in csv.DictReader(f)])
 
-    with open("./data/Merchant.csv", "r") as f:
+    with open("./migrations/data/Merchant.csv", "r") as f:
         op.bulk_insert(Merchant.__table__, [row for row in csv.DictReader(f)])
 
-    with open("./data/Description.csv", "r") as f:
+    with open("./migrations/data/Description.csv", "r") as f:
         op.bulk_insert(Description.__table__, [row for row in csv.DictReader(f)])
 
 
