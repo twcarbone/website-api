@@ -2,11 +2,11 @@ import pytest
 
 
 def test_innerdia(_client):
-    response = _client.get("/api/innerdia?nps=2.500&sch=40")
+    response = _client.get("/api/engdata/innerdia?nps=2.500&sch=40")
     assert response.status_code == 200
     assert response.json.get("innerdia") == "2.469"
 
-    response = _client.get("/api/innerdia?nps=not-a-nps&sch=40")
+    response = _client.get("/api/engdata/innerdia?nps=not-a-nps&sch=40")
     assert response.status_code == 401
     assert response.json.get("message") == "Invalid 'nps' or 'sch'"
 
@@ -14,17 +14,17 @@ def test_innerdia(_client):
 
 
 def test_pipesize(_client):
-    response = _client.get("/api/pipesize/10")
+    response = _client.get("/api/engdata/pipesize/10")
     assert response.status_code == 200
     assert response.json == {"id": 10, "nps": "2.500", "outer_dia": 2.875, "outer_dia_unit_id": 1}
 
-    response = _client.get("/api/pipesize/999")
+    response = _client.get("/api/engdata/pipesize/999")
     assert response.status_code == 401
     assert response.json.get("message") == "Invalid 'id'"
 
 
 def test_pipesizes(_client):
-    response = _client.get("/api/pipesizes")
+    response = _client.get("/api/engdata/pipesizes")
     assert response.status_code == 200
     assert response.json == [
         {"id": 1, "nps": "0.125", "outer_dia_unit_id": 1, "outer_dia": 0.405},

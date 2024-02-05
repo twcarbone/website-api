@@ -63,7 +63,7 @@ def _existing_user_dict():
 
 @pytest.fixture
 def _existing_user_jwt(_client, _existing_user_dict):
-    return _client.post("api/login", json=_existing_user_dict).get_json().get("access_token")
+    return _client.post("/api/auth/login", json=_existing_user_dict).get_json().get("access_token")
 
 
 @pytest.fixture

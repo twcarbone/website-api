@@ -28,19 +28,19 @@ def create_app(env: str = "Prod"):
 
     from api.auth import bp as auth_bp
 
-    app.register_blueprint(auth_bp, url_prefix="/api")
+    app.register_blueprint(auth_bp, url_prefix="/api/auth")
 
     from api.engdata import bp as engdata_bp
 
-    app.register_blueprint(engdata_bp, url_prefix="/api")
+    app.register_blueprint(engdata_bp, url_prefix="/api/engdata")
 
     from api.grocery import bp as grocery_bp
 
-    app.register_blueprint(grocery_bp, url_prefix="/api")
+    app.register_blueprint(grocery_bp, url_prefix="/api/grocery")
 
     from api.capitalone import bp as capitalone_bp
 
-    app.register_blueprint(capitalone_bp, url_prefix="/api")
+    app.register_blueprint(capitalone_bp, url_prefix="/api/capitalone")
 
     from api.time import bp as time_bp
 

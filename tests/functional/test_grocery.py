@@ -2,7 +2,7 @@ import pytest
 
 
 def test_products(_client):
-    response = _client.get("/api/products")
+    response = _client.get("/api/grocery/products")
     assert response.status_code == 200
     assert response.json == [
         {
@@ -33,7 +33,7 @@ def test_products(_client):
 
 
 def test_product(_client):
-    response = _client.get("/api/product/1")
+    response = _client.get("/api/grocery/product/1")
     assert response.status_code == 200
     assert response.json == {
         "brand": "Fresh",
@@ -44,13 +44,13 @@ def test_product(_client):
         "sku": "00000000040112",
     }
 
-    response = _client.get("/api/product/9999")
+    response = _client.get("/api/grocery/product/9999")
     assert response.status_code == 401
     assert response.json.get("message") == "Invalid 'id'"
 
 
 def test_orders(_client):
-    response = _client.get("/api/orders")
+    response = _client.get("/api/grocery/orders")
     assert response.status_code == 200
     assert response.json == [
         {"date": "Mon, 12 Jun 2023 00:00:00 GMT", "id": 2, "order_total": "13.09"},
@@ -59,17 +59,17 @@ def test_orders(_client):
 
 
 def test_order(_client):
-    response = _client.get("/api/order/1")
+    response = _client.get("/api/grocery/order/1")
     assert response.status_code == 200
     assert response.json == {"date": "Sun, 30 Apr 2023 00:00:00 GMT", "id": 1, "order_total": "11.70"}
 
-    response = _client.get("/api/order/9999")
+    response = _client.get("/api/grocery/order/9999")
     assert response.status_code == 401
     assert response.json.get("message") == "Invalid 'id'"
 
 
 def test_transactions(_client):
-    response = _client.get("/api/transactions")
+    response = _client.get("/api/grocery/transactions")
     assert response.status_code == 200
     assert response.json == [
         {
@@ -124,7 +124,7 @@ def test_transactions(_client):
 
 
 def test_transaction(_client):
-    response = _client.get("/api/transaction/1")
+    response = _client.get("/api/grocery/transaction/1")
     assert response.status_code == 200
     assert response.json == {
         "date": "Sun, 30 Apr 2023 00:00:00 GMT",
@@ -139,6 +139,6 @@ def test_transaction(_client):
         "sku": "00000000040112",
     }
 
-    response = _client.get("/api/transaction/9999")
+    response = _client.get("/api/grocery/transaction/9999")
     assert response.status_code == 401
     assert response.json.get("message") == "Invalid 'id'"
