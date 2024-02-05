@@ -15,9 +15,9 @@ db = flask_sqlalchemy.SQLAlchemy(model_class=api.models.Base)
 ureg = pint.UnitRegistry()
 
 
-def create_app(config_class=config.ProdConfig):
+def create_app(env: str = "Prod"):
     app = flask.Flask(__name__)
-    app.config.from_object(config_class)
+    app.config.from_object(f"config.{env}Config")
 
     jwt.init_app(app)
     db.init_app(app)

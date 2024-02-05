@@ -16,7 +16,7 @@ import config
 
 @pytest.fixture
 def _app():
-    return api.create_app(config_class=config.TestConfig)
+    return api.create_app(env="Test")
 
 
 @pytest.fixture
