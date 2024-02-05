@@ -9,10 +9,12 @@ from api.errors.handlers import APIError
 from api.models import exc
 
 
+# FIXME: 'get_many' should be available to all routes
 def get_many(model: Type[models._CapitalOneBase], **kwargs):
     return flask.jsonify(model.serialize_sequence(model.scalars(**request.args)))
 
 
+# FIXME: 'get_one' should be available to all routes
 def get_one(model: Type[models._CapitalOneBase], id):
     try:
         return flask.jsonify(model.scalar_one(id=id).serialize())
